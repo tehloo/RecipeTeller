@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "219225835372",
+    "firebase_url": "https://recipe-teller.firebaseio.com",
+    "project_id": "recipe-teller",
+    "storage_bucket": "recipe-teller.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219225835372:android:4461569bea457a6ebfd549",
+        "android_client_info": {
+          "package_name": "com.example.recipe_teller"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "219225835372-m6h00ejnt37ks4k3gchu37k8q30pj1vq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5SrnlIn9lzX83VXdPQC2hSeqyhJHKbr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "219225835372-m6h00ejnt37ks4k3gchu37k8q30pj1vq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
