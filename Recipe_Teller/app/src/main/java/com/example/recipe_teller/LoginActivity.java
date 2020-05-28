@@ -1,5 +1,6 @@
 package com.example.recipe_teller;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -106,13 +107,17 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                             dialog = builder.setMessage("Welcome to TILO")
-                                    .setPositiveButton("확인", null)
+                                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent mainintent = new Intent(LoginActivity.this, MainActivity.class);
+                                            mainintent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//뒤로가기 버튼 눌렀을때 메인에서 로그인으로 못가게?
+                                            LoginActivity.this.startActivity(mainintent);
+                                            finish();
+                                        }
+                                    })
                                     .create();
                             dialog.show();
-                            Intent mainintent = new Intent(LoginActivity.this, MainActivity.class);
-                            mainintent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//뒤로가기 버튼 눌렀을때 메인에서 로그인으로 못가게?
-                            LoginActivity.this.startActivity(mainintent);
-                            finish();
                         } else {
                             // If sign in fails, display a message to the user.
                             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
