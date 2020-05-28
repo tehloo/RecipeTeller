@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".MainCookActivity">
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="545dp"
+        tools:layout_editor_absoluteX="3dp"
+        tools:layout_editor_absoluteY="734dp">
+
+    </androidx.viewpager.widget.ViewPager>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="vertical"
+        android:padding="3dp">
+
+        <FrameLayout
+            android:id="@+id/buttonPlace"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <Button
+                android:id="@+id/btn_next"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|right"
+                android:layout_weight="1"
+                android:onClick="mOnClick"
+                android:text="Next"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/pageCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="1/9페이지" />
+
+            <Button
+                android:id="@+id/btn_previous"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left"
+                android:visibility="invisible"
+                android:layout_weight="1"
+                android:onClick="mOnClick"
+                android:text="PREVIOUS"
+                android:textSize="12sp" />
+        </FrameLayout>
+    </LinearLayout>
+
+
+
+</LinearLayout>
+
+
