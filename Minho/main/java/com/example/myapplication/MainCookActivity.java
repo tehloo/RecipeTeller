@@ -9,17 +9,22 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainCookActivity extends AppCompatActivity {
@@ -32,20 +37,25 @@ public class MainCookActivity extends AppCompatActivity {
     private Button button3; // 타이머 시작
     private Button button4; // 타이머 종료
 
-    int page_num; // 총 페이지 수
+    Long page_num; // 총 페이지 수
     TextView textView2; // 숫자가 나오는 텍스트뷰
     MyTimer myTimer; // 타이머 객체 생성
 
     ProgressBar prog = null; // 타이머 바 객체
     int MAX_Timer = 60; // 타이머 할당 시간
 
-    ArrayList<Integer> CookTimeList;
-    int Index_num;
+    ArrayList<Long> CookTimeList = new ArrayList<>();
+    ArrayList<String> ImgList = new ArrayList<>();
+    ArrayList<String> CookContextList = new ArrayList<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cooking_main);
+
+
         int position; // 현재 보여지는 아이템의 위치를 리턴
         pager= (ViewPager)findViewById(R.id.pager);
 
@@ -59,26 +69,14 @@ public class MainCookActivity extends AppCompatActivity {
         prog = (ProgressBar) findViewById(R.id.TimerProgressBar); // 타이머 바
         textView2 = (TextView) findViewById(R.id.textView2); // 타이머 남은 시간 텍스트
 
-        recipeDataInit();
-        MAX_Timer = CookTimeList.get(0);
-        initProg();// 타이머 바 초기화
+        recipeDataInit(); // DB에서 데이터 가져오기
 
-        if (MAX_Timer == 0)
-        {
-            button3.setVisibility(View.INVISIBLE);
-            button4.setVisibility(View.INVISIBLE);
-            prog.setVisibility(View.INVISIBLE);
-            textView2.setVisibility(View.INVISIBLE);
+        // 데이터를 받아오는 동안 로딩 시간을 강제로 줌.
+        try {
+            Thread.sleep(1500); // 1.5초
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        else{
-            button3.setVisibility(View.VISIBLE);
-            button4.setVisibility(View.VISIBLE);
-            prog.setVisibility(View.VISIBLE);
-            textView2.setVisibility(View.VISIBLE);
-        }
-
-
-        myTimer = new MyTimer(MAX_Timer * 1000, 1000); // 타이머 주기 설정. - 이게 타이머 시간임.
 
         // 처음 시작시 총 몇페이지의 1페이지인지 반환
         position=pager.getCurrentItem();//현재 보여지는 아이템의 위치를 리턴
@@ -90,44 +88,87 @@ public class MainCookActivity extends AppCompatActivity {
         //PagerAdapter를 상속받은 CustomAdapter 객체 생성
         //CustomAdapter에게 LayoutInflater 객체 전달
 
-        CustomAdapter adapter= new CustomAdapter(getLayoutInflater());
 
-        //ViewPager에 Adapter 설정
-        pager.setAdapter(adapter);
+
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override  // 스크롤 효과가 나는 동안 계속해서 호출되는 부분.
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 Log.d("ITPANGPANG","onPageScrolled : "+position);
 
+        }
+
+        @Override   // 현재 선택된 페이지
+        public void onPageSelected(int position) {
+            Log.d("ITPANGPANG","onPageSelected : "+position);
+
+
+            // 스크롤로 인한 페이지 버튼 설정
+            if(position + 1 == 1) // 처음에는 이전 버튼 안보이게
+                button1.setVisibility(View.INVISIBLE);
+            if(position + 1 != 9) // 다음 버튼 보이게
+                button2.setVisibility(View.VISIBLE);
+            if(position + 1 == 9) // 마지막에는 다음 버튼 안보이게
+                button2.setVisibility(View.INVISIBLE);
+            if(position + 1 != 1){ // 이전 버튼 보이게
+                button1.setVisibility(View.VISIBLE);
             }
 
-            @Override   // 현재 선택된 페이지
-            public void onPageSelected(int position) {
-                Log.d("ITPANGPANG","onPageSelected : "+position);
+            textView.setText(String.valueOf(position + 1)+"/9 페이지");
+
+            // 화면이 전환되었으니 기존에 진행되던 타이머가 있으면 멈춤.
+            myTimer.cancel();
+
+            // 해당 페이지의 Time 설정
+            MAX_Timer = CookTimeList.get(position).intValue();
+
+            textView2.setText(String.valueOf(MAX_Timer) + " 초");
+            initProg();
+            button3.setEnabled(true);
 
 
-                // 스크롤로 인한 페이지 버튼 설정
-                if(position + 1 == 1) // 처음에는 이전 버튼 안보이게
-                    button1.setVisibility(View.INVISIBLE);
-                if(position + 1 != 9) // 다음 버튼 보이게
-                    button2.setVisibility(View.VISIBLE);
-                if(position + 1 == 9) // 마지막에는 다음 버튼 안보이게
-                    button2.setVisibility(View.INVISIBLE);
-                if(position + 1 != 1){ // 이전 버튼 보이게
-                    button1.setVisibility(View.VISIBLE);
-                }
-                textView.setText(String.valueOf(position + 1)+"/9 페이지");
 
-                // 해당 페이지의 Time 설정
-                MAX_Timer = CookTimeList.get(position);
+            if (MAX_Timer == 0)
+            {
+                button3.setVisibility(View.INVISIBLE);
+                button4.setVisibility(View.INVISIBLE);
+                prog.setVisibility(View.INVISIBLE);
+                textView2.setVisibility(View.INVISIBLE);
+            }
+            else{
+                myTimer = new MyTimer(MAX_Timer * 1000, 1000); // 타이머 주기 설정. - 이게 타이머 시간임.
+                button3.setVisibility(View.VISIBLE);
+                button4.setVisibility(View.VISIBLE);
+                prog.setVisibility(View.VISIBLE);
+                textView2.setVisibility(View.VISIBLE);
+            }
 
-                // 화면이 전환되었으니 기존에 진행되던 타이머가 있으면 멈춤.
-                myTimer.cancel();
-                initProg();
-                button3.setEnabled(true);
+        }
 
+        @Override // 페이지 상태
+        public void onPageScrollStateChanged(int state) {
+            Log.d("ITPANGPANG","onPageScrollStateChanged : "+state);
 
+        }
+    });
+
+    }
+
+    public void recipeDataInit() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("Recipe").document("CuziRaksRamen"); // 임시 경로, 데이터베이스 내용 구축 후 변경될 예정
+        // FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Log.d("DBInit", "DocumentSnapshot data: " + documentSnapshot.getData());
+                page_num = (Long) documentSnapshot.get("RECIPE_INDEX_NUM");
+                CookTimeList = (ArrayList<Long>)documentSnapshot.get("COOK_TIME");
+                ImgList = (ArrayList<String>)documentSnapshot.get("COOK_IMG");
+                CookContextList = (ArrayList<String>)documentSnapshot.get("COOK_CONTEXT");
+                MAX_Timer = CookTimeList.get(0).intValue();
+                initProg();// 타이머 바 초기화
 
                 if (MAX_Timer == 0)
                 {
@@ -142,32 +183,41 @@ public class MainCookActivity extends AppCompatActivity {
                     prog.setVisibility(View.VISIBLE);
                     textView2.setVisibility(View.VISIBLE);
                 }
+                myTimer = new MyTimer(MAX_Timer * 1000, 1000); // 타이머 주기 설정. - 이게 타이머 시간임.
 
+
+                CustomAdapter adapter= new CustomAdapter(getLayoutInflater(), ImgList, CookContextList, page_num);
+
+                //ViewPager에 Adapter 설정
+                pager.setAdapter(adapter);
             }
+/*
+            @Override
+            public void onSuccess(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {  // DB 받는 것에 성공하면
 
-            @Override // 페이지 상태
-            public void onPageScrollStateChanged(int state) {
-                Log.d("ITPANGPANG","onPageScrollStateChanged : "+state);
-
-            }
+                    } else {
+                        Log.d("DBInit", "No such document");
+                    }
+                } else {
+                    Log.d("DBInit", "get failed with ", task.getException());
+                }
+            }*/
         });
 
-    }
-
-    private void recipeDataInit() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("Recipe").document("CuziRaksRamen"); // 임시 경로, 데이터베이스 내용 구축 후 변경될 예정
-       // FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+       /* docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                 CookTimeList = (ArrayList<Integer>)documentSnapshot.get("COOK_TIME");
-                Index_num = (int) documentSnapshot.get("RECIPE_INDEX_NUM");
+                Index_num = (Integer) documentSnapshot.get("RECIPE_INDEX_NUM");
             }
-        });
+        });*/
     }
+
+
 
     //onClick속성이 지정된 View를 클릭했을때 자동으로 호출되는 메소드
     public void mOnClick(View v){
@@ -183,7 +233,7 @@ public class MainCookActivity extends AppCompatActivity {
                 //두번째 파라미터: 변경할 때 부드럽게 이동하는가? false면 팍팍 바뀜
                 pager.setCurrentItem(position-1,true);
 
-                MAX_Timer = CookTimeList.get(position - 1);
+                MAX_Timer = CookTimeList.get(position - 1).intValue();
                 if (MAX_Timer == 0)
                 {
                     button3.setVisibility(View.INVISIBLE);
@@ -192,6 +242,9 @@ public class MainCookActivity extends AppCompatActivity {
                     textView2.setVisibility(View.INVISIBLE);
                 }
                 else{
+                    myTimer = new MyTimer(MAX_Timer * 1000, 1000); // 타이머 주기 설정. - 이게 타이머 시간임.
+                    textView2.setText(String.valueOf(MAX_Timer) + " 초");
+                    initProg();
                     button3.setVisibility(View.VISIBLE);
                     button4.setVisibility(View.VISIBLE);
                     prog.setVisibility(View.VISIBLE);
@@ -216,7 +269,7 @@ public class MainCookActivity extends AppCompatActivity {
 
                 pager.setCurrentItem(position+1,true);
 
-                MAX_Timer = CookTimeList.get(position + 1);
+                MAX_Timer = CookTimeList.get(position + 1).intValue();
                 if (MAX_Timer == 0)
                 {
                     button3.setVisibility(View.INVISIBLE);
@@ -225,6 +278,9 @@ public class MainCookActivity extends AppCompatActivity {
                     textView2.setVisibility(View.INVISIBLE);
                 }
                 else{
+                    myTimer = new MyTimer(MAX_Timer * 1000, 1000); // 타이머 주기 설정. - 이게 타이머 시간임.
+                    textView2.setText(String.valueOf(MAX_Timer) + " 초");
+                    initProg();
                     button3.setVisibility(View.VISIBLE);
                     button4.setVisibility(View.VISIBLE);
                     prog.setVisibility(View.VISIBLE);
@@ -242,7 +298,7 @@ public class MainCookActivity extends AppCompatActivity {
                 break;
             case R.id.btnStart: // 타이머 시작 버튼
                 myTimer.start();//
-                textView2.setText(String.valueOf(MAX_Timer - 1) + " 초");
+                //textView2.setText(String.valueOf(MAX_Timer - 1) + " 초");
                 button3.setEnabled(false); // 중복 타이머를 막기 위한 비활성화
                 break;
             case R.id.btnReset : // 타이머 리셋 버튼
