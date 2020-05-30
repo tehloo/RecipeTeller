@@ -1,12 +1,18 @@
 package com.example.myapplication;
 
 
+import android.app.Activity;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 
 /*import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,6 +25,23 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;*/
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Registry;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,16 +49,25 @@ public class CustomAdapter extends PagerAdapter {
 
   //  private static final String TAG = "MainCookActivity";//태그 생성함
     LayoutInflater inflater;
-   // List<Recipe> data = new ArrayList<>();
+    ArrayList<String> ImgList = new ArrayList<>();
+    ArrayList<String> CookContextList = new ArrayList<>();
+    Long page_num;
+    String ImgUrl;
+
+    // List<Recipe> data = new ArrayList<>();
 
 
 
-    public CustomAdapter(LayoutInflater inflater) {
+    public CustomAdapter(LayoutInflater inflater, ArrayList<String> ImgList, ArrayList<String> CookContextList,
+                         Long page_num) {
 
         // TODO Auto-generated constructor stub
 
         //전달 받은 LayoutInflater를 멤버변수로 전달
         this.inflater = inflater;
+        this.CookContextList = CookContextList;
+        this.ImgList = ImgList;
+        this.page_num = page_num;
     }
 
 
@@ -45,13 +77,11 @@ public class CustomAdapter extends PagerAdapter {
     @Override
     public int getCount() {
 
-       // final int[] i = new int[1];
-
         // TODO Auto-generated method stub
 
 
 
-        return 9; //이미지 개수 리턴(그림이 10개라서 10을 리턴)
+        return page_num.intValue(); //이미지 개수 리턴(그림이 10개라서 10을 리턴)
 
     }
 
@@ -70,24 +100,43 @@ public class CustomAdapter extends PagerAdapter {
         View view=null;
 
 
+ //       myTimer = new MyTimer(MAX_Timer * 1000,1000);
+
         //새로운 View 객체를 Layoutinflater를 이용해서 생성
         //만들어질 View의 설계는 res폴더>>layout폴더>>viewpater_childview.xml 레이아웃 파일 사용
 
         view= inflater.inflate(R.layout.viewpager_cooking_childview, null);
-
+      //  View view2 = ;
 
         //만들어진 View안에 있는 ImageView 객체 참조
         //위에서 inflated 되어 만들어진 view로부터 findViewById()를 해야 하는 것에 주의.
 
+
         ImageView img= (ImageView)view.findViewById(R.id.img_viewpager_childimage);
         TextView textView = (TextView)view.findViewById(R.id.HowtoCook);
+
+
+        Button button_start = (Button) view.findViewById(R.id.btnStart);
+        Button button_reset = (Button) view.findViewById(R.id.btnReset);
+
+        //이미지 넣기
+        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+        ImgUrl = ImgList.get(position);
+
+      /*  StorageReference gsReference = firebaseStorage.getReferenceFromUrl(ImgUrl);
+        Log.e("error:", gsReference.toString());
+        GlideApp
+                .with(view)
+                .load(gsReference)
+                .into(img);*/
 
 
         //ImageView에 현재 position 번째에 해당하는 이미지를 보여주기 위한 작업
         //현재 position에 해당하는 이미지를 setting
         img.setImageResource(R.drawable.step1+position);
 
-        CharSequence charSequence = "요리방법" + Integer.toString(position+1);
+        CharSequence charSequence = CookContextList.get(position).toString();
+                //"요리방법" + Integer.toString(position+1); // 각 페이지 요리방법 DB 적용
         textView.setText(charSequence);
 
         //ViewPager에 만들어 낸 View 추가
@@ -97,13 +146,10 @@ public class CustomAdapter extends PagerAdapter {
         return view;
 
     }
-
-
     //화면에 보이지 않은 View는파쾨를 해서 메모리를 관리함.
     //첫번째 파라미터 : ViewPager
     //두번째 파라미터 : 파괴될 View의 인덱스(가장 처음부터 0,1,2,3...)
     //세번째 파라미터 : 파괴될 객체(더 이상 보이지 않은 View 객체)
-
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
 
@@ -124,5 +170,8 @@ public class CustomAdapter extends PagerAdapter {
         return v == obj;
 
     }
+
+
+
 
 }
