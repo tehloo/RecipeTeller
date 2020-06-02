@@ -11,43 +11,76 @@
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="60dp"
+            android:background="#F87F22">
 
             <EditText
                 android:id="@+id/searchEditText"
-                android:textSize="10sp"
+                android:textSize="15sp"
+                android:background="#FFFFFF"
                 android:layout_width="200dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 android:layout_weight="7"
-                android:hint="레시피를 검색해보세요." />
+                android:hint="   레시피를 검색해보세요." />
 
             <Button
-                android:layout_width="wrap_content"
+
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_width="50dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="1"
+                android:textColor="#ffffff"
+                android:background="@drawable/border_round"
                 android:text="검색" />
 
-            <ImageView
-                android:layout_width="80dp"
+            <TextView
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_launcher_background" />
+                android:layout_width="80dp"
+                android:background="#F87F22"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColor="#fff"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:fontFamily="@font/mapogoldenpier"
+                android:text="Recipe Teller"/>
+
+
+
         </LinearLayout>
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewpager"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp" />
+            android:layout_height="300dp">
+
+            <ImageView
+                android:id="@+id/imageFood"
+                android:src="@drawable/food2"
+                android:scaleType="fitXY"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/textFood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="쿡쌤의 추천!\n식탁에 봄을 불러오는 따스한\n냉이 된장국"
+                android:textColor="#fff"
+                android:textSize="18dp"
+                android:textStyle="normal"
+                android:layout_marginTop="15dp"/>
+
+        </FrameLayout>
+
 
         <TextView
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="40dp"
             android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="50dp"

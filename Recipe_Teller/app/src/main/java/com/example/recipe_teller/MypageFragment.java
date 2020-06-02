@@ -40,15 +40,6 @@ public class MypageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        userDBInit();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    private void userDBInit() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             String uid="";

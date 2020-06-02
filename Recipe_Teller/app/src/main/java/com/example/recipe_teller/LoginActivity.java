@@ -34,6 +34,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+  /*
+        //레시피 액티비티 테스트
+        startActivity(new Intent(LoginActivity.this, RecipeCoverActivity.class));
+        finish();
+        //레시피 액티비티 테스트
+
+*/
+
         mAuth = FirebaseAuth.getInstance();
 
         Button loginButton = (Button) findViewById((R.id.loginButton));
@@ -106,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                            dialog = builder.setMessage("Welcome to TILO")
+                            dialog = builder.setMessage("Welcome to RecipeTeller")
                                     .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {

@@ -27,10 +27,4 @@ public class HomeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        ViewPager viewPager = (ViewPager) getView().findViewById(R.id.viewpager);
-        ImageAdapter adapter = new ImageAdapter(getContext());
-        viewPager.setAdapter(adapter);
-    }
 }
