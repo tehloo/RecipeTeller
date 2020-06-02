@@ -43,6 +43,12 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'// 이미지 로딩 라이브러리 glide 컴파일러연결
     implementation "com.google.code.gson:gson:2.8.2"    //Gson
     implementation 'com.google.android.material:material:1.2.0-alpha01'
+    implementation "com.squareup.okhttp3:okhttp:3.11.0" // for asr
+    implementation "com.squareup.okio:okio:2.0.0" // for asr
+    implementation ("com.googlecode.json-simple:json-simple:1.1.1"){ // for asr
+        exclude group: "org.hamcrest", module: 'hamcrest-core'
+    }
     implementation project(path: ':server-tts-engine-release')
-    implementation project(path: ':engine-api-3.2.193')    // viewpager import
+    implementation project(path: ':engine-api-3.2.193')
+    implementation project(path: ':speech-engine-release')    // viewpager import
 }

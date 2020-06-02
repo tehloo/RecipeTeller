@@ -9,5 +9,93 @@
   "privacy" : "no",
   "effect" : "None",
   "authentication": "RGVlcFRoaW5RKFRlc3Rlcik=",
-  "serverUrl" : "tts.thinqai.net:443"
+  "serverUrl" : "tts.thinqai.net:443",
+
+  "enableHybrid": true,
+  "internalBufferLength": 60,
+  "bufferPollingCycle": 10,
+  "embedded_config": {
+    "triggerWord": "HILG",
+    "sensitivity": 10,
+    "cm": 0.01,
+    "weight": 0,
+    "noiseThreshold": 3000,
+    "enablePcmDump": false,
+    "enableDebug": false,
+    "pcmDumpPath": "/storage/emulated/0/Android/data/com.lge.aip.sampleforhtwd/files"
+  },
+  "server_config": {
+    "enableHttp2" : true,
+    "serverIp": "gw.thinqai.net",
+    "serverPort": "38443",
+    "applicationName": "com.lge.deepthinq.test",
+    "deviceId": "konkuk-project",
+    "customKey": "ad8a3e54-a878103825f82ee40be5c12c25f96ed0714b0-ebb24795adb79a0f4e4",
+    "enableServerPcmDump": false,
+    "modelName": "lg_ail_modelTest01"
+  },
+
+
+  "enableHttp2": true,
+  "serverIp": "gw.thinqai.net",
+  "serverPort": 38443,
+  "appName": "com.lge.deepthinq.test",
+  "authToken": "",
+  "customKey": "ad8a3e54-a878103825f82ee40be5c12c25f96ed0714b0-ebb24795adb79a0f4e4",
+  "deviceID": "konkuk-project",
+  "deviceType": "sdk-dev-machine",
+  "locale": "ko-KR",
+  "recognitionMode": "dictation",
+  "enablePcmDump" : false,
+  "pcmDumpPath" : "/sdcard/debug_dump",
+  "userID": "baily_h2_test",
+  "asr": {
+    "data": {
+      "channels": 1,
+      "codec": "pcm",
+      "engine": "lgasr",
+      "epd": "server",
+      "epd_eng_off": true,
+      "epd_max_pause": 0,
+      "epd_skip_bytes": 0,
+      "keyword_reject": false,
+      "language": "ko-KR",
+      "n_best": 1,
+      "need_kwd_result": false,
+      "nr": "off",
+      "partial": true,
+      "pcm_dump": true,
+      "rate": 16000,
+      "triggerWord": "none",
+      "developerOption": false
+    },
+    "support": true,
+    "verbose": false,
+    "version": 1
+  },
+  "userAgent": {
+    "model": "NA",
+    "os": "android",
+    "pcmSource": "file",
+    "product": "NA",
+    "version": "1.0"
+  },
+  "nlp": {
+    "data": {
+      "function": "ANALYSIS",
+      "language": "KOR",
+      "country": "KR",
+      "deviceId": "SOMETHING_UNIQUE",
+      "timeZone": "Asia/Seoul",
+      "deviceTime": "1529108858000",
+      "inputType": "SPEECH",
+      "config": {
+        "nlpVersion": "0.01.xxxx"
+      }
+    },
+    "support": false,
+    "verbose": false,
+    "version": 1
+  }
+
 }

@@ -1,6 +1,8 @@
 package com.example.recipe_teller;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -16,19 +18,21 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.gms.tasks.OnFailureListener;
+import com.example.recipe_teller.configASR.AsrConfig;
+import com.example.recipe_teller.configASR.SpeechConfig;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 import com.lge.aip.engine.base.IEngineListener;
 import com.lge.aip.engine.servertts.ISTTSListener;
@@ -41,18 +45,19 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
+import static com.lge.aip.engine.base.AIEngineReturn.LGAI_ASR_SUCCESS;
 import static com.lge.aip.engine.base.AIEngineReturn.LGAI_STTS_SUCCESS;
 import static com.lge.aip.engine.servertts.STTSEngine.TTS_LANGUAGE_ENGLISH;
 import static com.lge.aip.engine.servertts.STTSEngine.TTS_LANGUAGE_KOREAN;
+import static com.lge.aip.engine.speech.util.MyDevice.isNetworkConnection;
 
 
-public class MainCookActivity extends AppCompatActivity {
+public class MainCookActivity extends AppCompatActivity implements AsrManager.UpdateResultListener{
 
     String documentName;
 
@@ -63,6 +68,10 @@ public class MainCookActivity extends AppCompatActivity {
     private Button button2; // 다음 페이지
     private Button button3; // 타이머 시작
     private Button button4; // 타이머 종료
+
+    //for ASR
+    private ToggleButton mButtonStartOnOff;
+    private AsrManager mEngineManager;
 
     private FloatingActionButton mTtsStart; // TTS 시작
     Long page_num; // 총 페이지 수
@@ -79,12 +88,10 @@ public class MainCookActivity extends AppCompatActivity {
 
     //TTS
     private static final String TAG = MainCookActivity.class.getSimpleName();
-
     private static final int MSG_RUN_TTS = 0;
     private static final int STTS_PERMISSION_REQUEST_LOAD_SAMPLES = 0;
     private static final Map<String, Integer> sMapSentence = createSentenceMap();
     private static final String pcmFileName = "result.pcm";
-
     private File mSampleFile;
     private STTSEngine mTts;
     private FileOutputStream mFos;
@@ -104,8 +111,9 @@ public class MainCookActivity extends AppCompatActivity {
     /**
      * Any changes to UI and config loaded from the json file are immediately written here.
      */
-    private TtsConfig mConfig;
-
+    private TtsConfig ttsConfig;
+    private SpeechConfig speechConfig;
+    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS=1234;
     private boolean mSentenceUpdated;
 
     private int mRequestedLanguage;
@@ -118,7 +126,7 @@ public class MainCookActivity extends AppCompatActivity {
         return map;
     }
 
-    private void initEngine() {
+    private void initEngineTTS() {
         //tts 텍스트 전달 매개체 설정
         mTts = new STTSEngine();
         if (mTts.create() != LGAI_STTS_SUCCESS) {
@@ -319,6 +327,32 @@ public class MainCookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_cook);
 
+        //for audio permission
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECORD_AUDIO},
+                    MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+        }        mButtonStartOnOff = (ToggleButton) findViewById(R.id.mButtonStartOnOff);
+        //for ASR
+        initEngineASR();
+        mButtonStartOnOff.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Log.e("ASR", "buttonClicked");
+                if (mEngineManager == null) {
+                    Log.d(TAG, "StartButton: EngineManager is not created.");
+                    mEngineManager = new AsrManager(MainCookActivity.this, MainCookActivity.this);
+                }
+                if (mButtonStartOnOff.isChecked()) {
+                    startASR();
+                } else {
+                    stopASR();
+                }
+            }
+        });
+
         //Log.i(TAG, "Sample Version: " + BuildConfig.VERSION_NAME);
         Intent intent = getIntent();
         documentName = intent.getExtras().getString("recipeName");
@@ -331,6 +365,7 @@ public class MainCookActivity extends AppCompatActivity {
         button2 = (Button)findViewById(R.id.btn_next); // 다음 버튼
         button3 = (Button)findViewById(R.id.btnStart); // 타이머 시작 버튼
         button4 = (Button)findViewById(R.id.btnReset); // 타이머 리셋 버튼
+
 
         mTtsStart = (FloatingActionButton) findViewById(R.id.TTSButton); // TTS 버튼
         mSentenceUpdated = false;
@@ -350,9 +385,9 @@ public class MainCookActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        initEngine(); // TTS 엔진 설정
-        ConfigLoader configLoader = new ConfigLoader(this);
-        mConfig = configLoader.loadConfig(TtsConfig.class);
+        initEngineTTS(); // TTS 엔진 설정
+        ConfigLoaderTTS configLoaderTTS = new ConfigLoaderTTS(this);
+        ttsConfig = configLoaderTTS.loadConfig(TtsConfig.class);
 
         // 처음 시작시 총 몇페이지의 1페이지인지 반환
         position=pager.getCurrentItem();//현재 보여지는 아이템의 위치를 리턴
@@ -427,6 +462,72 @@ public class MainCookActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void stopASR() {
+        Log.e("ASR", "stopbyuser");
+        stopListening(getString(R.string.stopped_by_user));
+    }
+
+    private void startASR() {
+        Log.e("ASR", "StartButton: START");
+
+        if (!isNetworkConnection(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(), R.string.network_not_available, Toast.LENGTH_SHORT).show();
+            mButtonStartOnOff.setChecked(false);
+            return;
+        }
+                    /*
+                    // Check file information in file mode
+                    boolean isFileMode = false;
+                    if (mRadioGroupInputType.getCheckedRadioButtonId() == R.id.vr_radio_file) {
+                        isFileMode = true;
+                    }
+                    if (isFileMode && TextUtils.isEmpty(mSelectedFilePath)) {
+                        Toast.makeText(getApplicationContext(), R.string.file_not_valid, Toast.LENGTH_LONG).show();
+                        mButtonStartOnOff.setChecked(false);
+                        return;
+                    }
+
+                    Log.d(TAG, "StartButton: lang:" + mSpnLanguage.getSelectedItemId()
+                            + " workingMode:" + mSpnWorkingMode.getSelectedItemId()
+                            + " CompleteMode:" + mSpnCompleteMode.getSelectedItemId()
+                            + " isFileMode:" + isFileMode
+                            + " path:" + mSelectedFilePath);
+
+                    updateDeviceTime();
+                    */
+        mEngineManager.create();
+
+        // Create Config in Json format. In this case, we use Gson to dynamically configure
+        // to change the setting by the UI, but it is also possible to read from a fixed
+        // file or to use a hard-coded string.
+        if (!speechConfig.enableHttp2) {
+            speechConfig.asrConfig.encryptionKey = getEncryptionKey();
+        }
+        String jsonConfigASR = new Gson().toJson(speechConfig, SpeechConfig.class);
+        mEngineManager.configure(jsonConfigASR);
+                    /*
+                        mScLog.clear();
+                    setEnabledViewsForStart(false);
+                    */
+        Log.e("ASR", "Speak");
+        int ret = mEngineManager.startListening(new MicAudioSource());
+        if (LGAI_ASR_SUCCESS != ret) {
+            stopListening("Unable to start. error = " + ret);
+        }
+
+    }
+
+    private void initEngineASR() {
+        //mEditPath.setText(mTestPath + ASSET_NAME_PCM);
+
+        // When using location information
+        //mLocationHelper.getLocationInfo();
+
+        loadConfig();
+
+        mEngineManager = new AsrManager(this, this);
     }
 
     public void recipeDataInit() {
@@ -642,6 +743,34 @@ public class MainCookActivity extends AppCompatActivity {
         mTtsStart.setEnabled(false);
     }
 
+    @Override
+    public void updateResult(final String str) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (str != null && !str.isEmpty()) {
+                    Log.e("updateResult", str);
+                    //mScLog.append(str);
+                }
+                mButtonStartOnOff.setChecked(false);
+                //setEnabledViewsForStart(true);
+            }
+        });
+    }
+
+    @Override
+    public void updateKeyword(final String str) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (str != null && !str.isEmpty()) {
+                    Log.e("updateKeyword", str);
+                    //mScLog.updateKeyword(str);
+                }
+            }
+        });
+    }
+
 
     private class BufferHandler extends Handler {
 
@@ -656,9 +785,9 @@ public class MainCookActivity extends AppCompatActivity {
                     /**
                      * Deliver configuration values to engine before execution.
                      */
-                    String jsonConfig = new Gson().toJson(mConfig, TtsConfig.class);
-                    Log.d(TAG, "jsonConfig: " + jsonConfig);
-                    mTts.configure(jsonConfig); // READY로 바뀜 // 여기서 에러. jsonConfig = null;???
+                    String jsonConfigTTS = new Gson().toJson(ttsConfig, TtsConfig.class);
+                    Log.d(TAG, "jsonConfig: " + jsonConfigTTS);
+                    mTts.configure(jsonConfigTTS); // READY로 바뀜 // 여기서 에러. jsonConfig = null;???
 
                     // 2019.01.22  State An explicit call to start/stop is required for state managing.
                     mTts.start(); // RUNNING으로 바뀜
@@ -732,5 +861,94 @@ public class MainCookActivity extends AppCompatActivity {
                 }
         );
     }
+    private void stopListening(String reason) {
+        Log.d(TAG, "StartButton: STOP");
+        mEngineManager.stopListening();
+    }
+    private String getEncryptionKey() {
+        return getBuildConfigField("ENCRYPTION_KEY");
+    }
+    private String getBuildConfigField(String name) {
+        String key = null;
+        try {
+            Field f = BuildConfig.class.getField(name);
+            key = (String)f.get(null);
+        } catch (Exception e) {
+            Log.w(TAG, "Cannot found on BuildConfig " + name);
+        }
+        return key;
+    }
+    private void loadConfig() {
+        ConfigLoaderASR configLoader = new ConfigLoaderASR(this);
+        speechConfig = configLoader.loadConfig(SpeechConfig.class);
 
+        if (speechConfig == null) {
+            showJsonErrorDialog();
+            return;
+        }
+
+        //enableSpinners(!speechConfig.enableHttp2);
+        if (speechConfig.enableHttp2) {
+            return;
+        }
+
+        AsrConfig asrConfig = speechConfig.asrConfig;
+        if (asrConfig == null) {
+            showJsonErrorDialog();
+            return;
+        }
+        /*
+        if (mSpnLanguage != null) {
+            ArrayAdapter adapter = (ArrayAdapter)mSpnLanguage.getAdapter();
+            int position = adapter.getPosition(asrConfig.language);
+            mSpnLanguage.setSelection(position);
+        }
+        if (mSpnWorkingMode != null) {
+            ArrayAdapter adapter = (ArrayAdapter)mSpnWorkingMode.getAdapter();
+            int position = adapter.getPosition(speechConfig.opMode);
+            mSpnWorkingMode.setSelection(position);
+        }
+        if (mSpnCompleteMode != null) {
+            mSpnCompleteMode.setSelection(asrConfig.enableCompleteMode? 0 : 1);
+        }
+        */
+    }
+    private void showJsonErrorDialog() {
+        Toast.makeText(this, R.string.popup_msg_config_error, Toast.LENGTH_LONG).show();
+        /*
+        if (mScLog != null) {
+            mScLog.clear();
+            mScLog.append(R.string.popup_msg_config_error);
+        }
+         */
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_SETTINGS && resultCode == RESULT_OK) {
+            speechConfig = null;
+            //removeListenerOnViews();
+            loadConfig();
+            //setListenerOnViews();
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            //MY_PERMISSIONS_REQUEST_READ_CONTACTS = 100
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    initEngineASR();
+
+                } else {
+                    Log.d("TAG", "permission denied by user");
+                }
+                return;
+            }
+        }
+    }
 }

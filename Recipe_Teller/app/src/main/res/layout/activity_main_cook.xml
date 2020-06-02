@@ -87,6 +87,15 @@
             android:onClick="mOnClick"
             android:text="Reset"
             android:visibility="invisible" />
+        <ToggleButton
+            android:id="@+id/mButtonStartOnOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textOff="@string/common_start"
+            android:textOn="@string/common_end"
+            android:text="testASR"
+            android:visibility="visible"/>
 
     </LinearLayout>
 

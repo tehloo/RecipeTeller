@@ -26,4 +26,52 @@
     <string name="settings">Settings</string>
     <string name="select_a_file">Select a file</string>
     <string name="file_not_valid">File is not valid</string>
+
+
+    <!-- from ASR -->
+    <string name="pushbutton">    PUSH here    </string>
+    <string name="keyword">ASR mode</string>
+    <string name="complete_mode">Complete mode</string>
+    <string name="input_type">Input type</string>
+    <string name="mic">Mic</string>
+    <string name="path">path</string>
+    <string name="refresh">Refresh</string>
+    <string name="load">Load</string>
+    <string name="common_start">START</string>
+    <string name="common_end">End</string>
+    <string name="file">File</string>
+    <string name="common_speak">Speak</string>
+    <string name="sending_data">Sending data...</string>
+    <string name="common_press_start">Press to Start</string>
+    <string name="selected_dir_empty">Selected directory is empty</string>
+    <string name="not_existed_path">The path is not existed</string>
+    <string name="network_not_available">Network is not available</string>
+    <string name="permission_notice">External Storage and Read phone state permissions are mandatory.</string>
+    <string name="file_closed">File closed.</string>
+    <string name="file_reading">Reading file...</string>
+    <string name="channel">Channel</string>
+    <string name="spinner">"Copying files, please wait..."</string>
+    <string name="stopped_by_user">Stopped by user.</string>
+
+    <string-array name="array_language">
+        <item>KOR</item>
+        <item>ENG</item>
+    </string-array>
+
+    <!-- array_working_mode must match pair with mode_code in integers.xml -->
+    <string-array name="array_working_mode">
+        <item>ASRNLP</item>
+        <item>ASRONLY</item>
+    </string-array>
+
+    <string-array name="array_complete_mode">
+        <item>Complete</item>
+        <item>Partial</item>
+    </string-array>
+
+    <string-array name="array_channel_mode">
+        <item>Mono</item>
+        <item>6 channel</item>
+    </string-array>
+
 </resources>

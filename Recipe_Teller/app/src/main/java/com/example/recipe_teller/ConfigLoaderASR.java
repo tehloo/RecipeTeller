@@ -24,8 +24,8 @@ import java.util.Scanner;
 /**
  * Loads configs from a file.
  */
-class ConfigLoader {
-    private static final String TAG = ConfigLoader.class.getSimpleName();
+public class ConfigLoaderASR {
+    private static final String TAG = ConfigLoaderASR.class.getSimpleName();
 
     private static final String FILENAME_ASSET_CONFIG_JSON = "config.json";
 
@@ -42,7 +42,7 @@ class ConfigLoader {
      *
      * @param context Context
      */
-    ConfigLoader(Context context) {
+    ConfigLoaderASR(Context context) {
         mContext = context;
         mPref = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
@@ -52,7 +52,7 @@ class ConfigLoader {
      *
      * @param context Context
      */
-    ConfigLoader(Context context, String assetFileName) {
+    ConfigLoaderASR(Context context, String assetFileName) {
         mContext = context;
         mAssetFileName = assetFileName;
         mPref = PreferenceManager.getDefaultSharedPreferences(mContext);
@@ -136,7 +136,7 @@ class ConfigLoader {
      * @param path selected external path.
      */
     void putExternalPath(String path) {
-        mPref.edit().putString(ConfigLoader.KEY_EXTERNAL_PATH, path).apply();
+        mPref.edit().putString(ConfigLoaderASR.KEY_EXTERNAL_PATH, path).apply();
     }
 
     /**
