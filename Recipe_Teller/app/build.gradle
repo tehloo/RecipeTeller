@@ -34,8 +34,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.firebase:firebase-analytics:17.2.2'//파이어베이스 임플리먼트 종속성 추가.
     implementation 'com.google.firebase:firebase-auth:19.1.0'//파이어베이스 인증 모듈 종속성 추가
-    implementation 'com.google.firebase:firebase-firestore:21.2.1'//파이어베이스 파이어스토어 모듈 종속성 추가
-
-
-
+    implementation 'com.google.firebase:firebase-firestore:21.2.1'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'//파이어베이스 파이어스토어 모듈 종속성 추가
+    implementation 'com.google.firebase:firebase-storage:11.8.0' // get firestore storage ui
+    implementation 'com.firebaseui:firebase-ui-storage:3.2.1' // get firestore storage ui
+    implementation 'com.github.bumptech.glide:glide:4.11.0'// for get image from firestore
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'// for get image from firestore
 }

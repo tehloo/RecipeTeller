@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.myFragment, new HomeFragment());
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-
         //buttons
         homeBtn = findViewById(R.id.homeBtn);
         homeBtn.setOnClickListener(new View.OnClickListener(){
