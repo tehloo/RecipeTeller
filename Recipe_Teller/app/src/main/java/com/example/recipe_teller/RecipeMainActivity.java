@@ -3,6 +3,7 @@ package com.example.recipe_teller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,24 +21,44 @@ import java.util.ArrayList;
 
 public class RecipeMainActivity extends AppCompatActivity {
 
-    String recipeName;
+    String documentName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_main);
         Intent intent = getIntent();
-        recipeName = intent.getExtras().getString("recipeName");
+        documentName = intent.getExtras().getString("recipeName");
         recipeDataInit();
+        buttonInit();
+    }
+
+    private void buttonInit() {
+        Button backButton = (Button)findViewById(R.id.backButton);
+        Button startCookButton = (Button)findViewById(R.id.startCookButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        startCookButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MainCookActivity.class);
+                intent.putExtra("recipeName", documentName);
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     private void recipeDataInit() {
-        Log.e("recipeDataInit",recipeName);
+        Log.e("recipeDataInit",documentName);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("RecipeData").document(recipeName); // 임시 경로, 데이터베이스 내용 구축 후 변경될 예정
+        DocumentReference docRef = db.collection("RecipeData").document(documentName); // 임시 경로, 데이터베이스 내용 구축 후 변경될 예정
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                String myTime  = (String) documentSnapshot.get("COOK_TIME");
+                String myTime  = (String) documentSnapshot.get("COOK_TOTAL_TIME");
                 String myName  = (String) documentSnapshot.get("RECIPE_TITLE");
                 String myWriter  = (String) documentSnapshot.get("RECIPE_WRITER");
                 String myLevel = "";

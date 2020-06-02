@@ -11,6 +11,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/engine-api-3.2.193" />
+            <option value="$PROJECT_DIR$/server-tts-engine-release" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

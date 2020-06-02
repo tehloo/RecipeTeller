@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.recipe_teller">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 인터넷 퍼미션 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- 외부 저장소 읽기 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 외부 저장소 쓰기 -->
 
     <application
         android:allowBackup="true"
@@ -11,7 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RecipeMainActivity"></activity>
+        <activity android:name=".CustomAdapter" />
+        <activity android:name=".MainCookActivity"/>
+        <activity android:name=".RecipeMainActivity" />
         <activity android:name=".RecipeCoverActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".SignupActivity" />

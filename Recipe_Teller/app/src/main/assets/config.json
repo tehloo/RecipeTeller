@@ -1,0 +1,13 @@
+{
+  "language": "KOR",
+  "textType" : "Plain Text",
+  "voice": "Female1",
+  "speed" : "Medium",
+  "volume" : "Volume 5",
+  "pitch" : "Normal",
+  "format" : "PCM",
+  "privacy" : "no",
+  "effect" : "None",
+  "authentication": "RGVlcFRoaW5RKFRlc3Rlcik=",
+  "serverUrl" : "tts.thinqai.net:443"
+}

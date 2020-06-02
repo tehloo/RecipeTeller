@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">Recipe_Teller</string>
+    <string name="sentence_korean">안녕하세요. Server-TTS 입니다.</string>
+    <string name="sentence_english">Hello. This is Server-TTS example.</string>
+    <string name="sentence_chinese">你好。 这是Server-TTS。</string>
+    <string name="sentence_japanese">こんにちは。 これはServer-TTSです。</string>
+    <string name="sentence_french">Bonjour. C\'est Server-TTS par LG AI Lab.</string>
+    <string name="language">Language</string>
+    <string name="voiceType">Voice type</string>
+    <string name="msg_request_sentence_with_length">Requesting sentence(length=%d characters)</string>
+    <string name="msg_tts_working">Server TTS client start work</string>
+    <string name="msg_download_done">Download done</string>
+    <string name="msg_start_playing_pcm">Start to play</string>
+    <string name="msg_done_for_playing">Done</string>
+    <string name="msg_error_config">ERROR:Configuration is invalid.</string>
+    <string name="msg_error_sentence">ERROR:Sentence is empty or too long.</string>
+    <string name="msg_error_etc">Error : %d\nMessage : %s</string>
+    <string name="msg_error_engine">Server TTS engine is not initialized</string>
+    <string name="msg_error_listener">Listener has problem</string>
+    <string name="msg_error_run">Server TTS error</string>
+    <string name="msg_copying_in_progress">Copying files in progress...</string>
+    <string name="api_state">API state test</string>
+    <!-- For config.json -->
+    <string name="popup_msg_config_error">json config has problem.</string>
+    <string name="finish">Finish</string>
+    <string name="settings">Settings</string>
+    <string name="select_a_file">Select a file</string>
+    <string name="file_not_valid">File is not valid</string>
 </resources>

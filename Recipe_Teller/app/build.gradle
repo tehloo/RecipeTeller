@@ -38,6 +38,11 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'//파이어베이스 파이어스토어 모듈 종속성 추가
     implementation 'com.google.firebase:firebase-storage:11.8.0' // get firestore storage ui
     implementation 'com.firebaseui:firebase-ui-storage:3.2.1' // get firestore storage ui
-    implementation 'com.github.bumptech.glide:glide:4.11.0'// for get image from firestore
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'// for get image from firestore
+    implementation 'com.google.android.material:material:1.1.0'// for get image from firestore
+    implementation 'com.github.bumptech.glide:glide:4.11.0'// 이미지 로딩 라이브러리 glide
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'// 이미지 로딩 라이브러리 glide 컴파일러연결
+    implementation "com.google.code.gson:gson:2.8.2"    //Gson
+    implementation 'com.google.android.material:material:1.2.0-alpha01'
+    implementation project(path: ':server-tts-engine-release')
+    implementation project(path: ':engine-api-3.2.193')    // viewpager import
 }
