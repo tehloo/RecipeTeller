@@ -62,7 +62,7 @@ public class RecipeFragment extends Fragment {
                     int count = 0;
                     for (DocumentSnapshot document : task.getResult()){
                         String recipeName = (String)document.get("RECIPE_TITLE");
-                        RecipeInfo inputRecipe = new RecipeInfo(recipeName);
+                        RecipeInfo inputRecipe = new RecipeInfo(recipeName, document.getId());
                         mArrayList.add(inputRecipe);
                         Log.e("RecipeFragment", recipeName + " input!");
                     }

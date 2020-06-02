@@ -21,6 +21,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder{
         protected TextView recipeName;
+        protected String documentName;
 
         public RecipeViewHolder(View view){
             super(view);
@@ -29,7 +30,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), RecipeMainActivity.class);
-                    intent.putExtra("recipeName", recipeName.toString());
+                    Log.e("RecipeAdpater", documentName);
+                    intent.putExtra("recipeName", documentName);
                     v.getContext().startActivity(intent);
                 }
             });
@@ -52,6 +54,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Log.e("RecipeAdapter", mList.get(position).getRecipeName());
         holder.recipeName.setText(mList.get(position).getRecipeName());
+        holder.documentName = mList.get(position).getDocumentName();
     }
 
     @Override
