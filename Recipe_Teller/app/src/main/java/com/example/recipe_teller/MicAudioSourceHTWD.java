@@ -11,17 +11,10 @@ import android.util.Log;
 /**
  * This class guides you how to use AudioRecord to send voice data to the engine. Please use it for testing.
  */
-public class MicAudioSource implements IAudioSourceASR {
-    private static final String TAG = MicAudioSource.class.getSimpleName();
+class MicAudioSourceHTWD implements IAudioSourceHTWD {
+    private static final String TAG = MicAudioSourceHTWD.class.getSimpleName();
 
-    /**
-     * Sampling rate
-     */
     private static final int SAMPLE_RATE = 16000; // Hz
-
-    /**
-     * To calculate buffer size for mic
-     */
     private static final int SUB_BUFFER = 15;
 
     /**
@@ -59,22 +52,6 @@ public class MicAudioSource implements IAudioSourceASR {
     @Override
     public int read(byte[] buffer) {
         return mRecorder.read(buffer, 0, buffer.length);
-    }
-
-    /**
-     * Read the audio data from source and write on the buffer given by parameter.
-     *
-     * @param buffer multiple byte array buffer to write the audio data. Mic uses 1 channel only.
-     * @return the size of buffer. See the return part of the {@link AudioRecord#read(byte[], int, int).
-     */
-    @Override
-    public int read(byte[][] buffer) {
-        return mRecorder.read(buffer[0], 0, buffer[0].length);
-    }
-
-    @Override
-    public int getChannel() {
-        return 1;
     }
 
     @Override

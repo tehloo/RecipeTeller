@@ -50,5 +50,7 @@ dependencies {
     }
     implementation project(path: ':server-tts-engine-release')
     implementation project(path: ':engine-api-3.2.193')
-    implementation project(path: ':speech-engine-release')    // viewpager import
+    implementation project(path: ':speech-engine-release')
+    implementation project(path: ':twd-engine-release')
+    implementation project(path: ':htwd-engine-release')    // viewpager import
 }

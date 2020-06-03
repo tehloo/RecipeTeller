@@ -52,13 +52,10 @@
     <string name="channel">Channel</string>
     <string name="spinner">"Copying files, please wait..."</string>
     <string name="stopped_by_user">Stopped by user.</string>
-
     <string-array name="array_language">
         <item>KOR</item>
         <item>ENG</item>
     </string-array>
-
-    <!-- array_working_mode must match pair with mode_code in integers.xml -->
     <string-array name="array_working_mode">
         <item>ASRNLP</item>
         <item>ASRONLY</item>
@@ -74,4 +71,18 @@
         <item>6 channel</item>
     </string-array>
 
+    <!-- from HTWD -->
+    <string name="sens_not_valid">Sensitivity is not valid</string>
+    <string name="detected">"\"%1$s\" detected in embedded engine."</string>
+    <string name="recognized_by_server">"Recognized by server.\nServer Message: [ %1$s ]"</string>
+    <string name="not_recognized_by_server">"Rejected by server.\nServer Message: [ %1$s ]"</string>
+    <string name="error">"ERROR : %1$s"</string>
+    <string name="module">"Module"</string>
+    <string name="embedded">"Embedded"</string>
+    <string name="hybrid">"Hybrid"</string>
+    <string-array name="array_keyword">
+        <item>AIRSTAR</item>
+        <item>HILG</item>
+        <item>HEYCLOI</item>
+    </string-array>
 </resources>
