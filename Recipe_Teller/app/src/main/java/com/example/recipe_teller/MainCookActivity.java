@@ -546,7 +546,6 @@ public class MainCookActivity extends AppCompatActivity implements AsrManager.Up
         // to change the setting by the UI, but it is also possible to read from a fixed
         // file or to use a hard-coded string.
         //Log.e("test", getEncryptionKeyHTWD());
-        mConfigHTWD.serverConfig.encryptionKey = getEncryptionKeyHTWD();
         String jsonConfig = new Gson().toJson(mConfigHTWD, HybridTwdConfig.class);
         Log.d(TAG, "onClick: " + jsonConfig);
         mHTWDEngineManager.configure(jsonConfig);

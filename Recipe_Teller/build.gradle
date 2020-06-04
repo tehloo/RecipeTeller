@@ -20,7 +20,7 @@ allprojects {
     repositories {
         // for firebase
         configurations.all {
-            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            resolutionStrategy.eachDependency { details ->
                 def requested = details.requested
                 if (requested.group == 'com.google.android.gms') {
                     details.useVersion '12.0.1'

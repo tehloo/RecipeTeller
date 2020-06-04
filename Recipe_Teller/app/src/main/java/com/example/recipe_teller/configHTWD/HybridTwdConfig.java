@@ -13,7 +13,7 @@ public class HybridTwdConfig {
     /**
      * Set server operation status.
      */
-    public boolean enableHybrid = true;
+    public boolean enableHybrid = false;
 
     /**
      * Sets the polling cycle value for data delay processing. (in milliseconds)
